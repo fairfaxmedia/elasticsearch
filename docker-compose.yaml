@@ -1,0 +1,36 @@
+version: '2.1'
+
+services:
+  discovery:
+    build: .
+    environment:
+      ES_NODE_NAME: discovery-$${HOSTNAME}
+      ES_DISCOVERY_ZEN_PING_UNICAST_HOSTS: localhost
+
+  master:
+    build: .
+    links:
+      - discovery
+    environment:
+      ES_NODE_NAME: master-$${HOSTNAME}
+      ES_NODE_MASTER: 'true'
+      ES_DISCOVERY_ZEN_PING_UNICAST_HOSTS: discovery
+
+  data:
+    build: .
+    links:
+      - discovery
+    environment:
+      ES_NODE_NAME: data-$${HOSTNAME}
+      ES_NODE_DATA: 'true'
+      ES_DISCOVERY_ZEN_PING_UNICAST_HOSTS: discovery
+
+  client:
+    build: .
+    links:
+      - discovery
+    ports:
+      - '9200'
+    environment:
+      ES_NODE_NAME: client-$${HOSTNAME}
+      ES_DISCOVERY_ZEN_PING_UNICAST_HOSTS: discovery

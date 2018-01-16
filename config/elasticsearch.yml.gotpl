@@ -1,0 +1,37 @@
+cluster.name: {{ getenv "ES_CLUSTER_NAME" "example" }}
+network.host: {{ getenv "ES_NETWORK_HOST" "0.0.0.0" }}
+node.name: {{ getenv "ES_NODE_NAME" "node" }}
+node.master: {{ getenv "ES_NODE_MASTER" "false" }}
+node.data: {{ getenv "ES_NODE_DATA" "false" }}
+action.auto_create_index: {{ getenv "ES_ACTION_AUTO_CREATE_INDEX" "+*" }}
+xpack.security.enabled: {{ getenv "ES_XPACK_SECURITY_ENABLED" "false" }}
+{{- if eq (getenv "ES_HTTP_CORS_ENABLED" "false") "true" }}
+http.cors.enabled: true
+http.cors.allow-origin: "{{ getenv "ES_HTTP_CORS_ALLOW_ORIGIN" "*" }}"
+{{- end }}
+gateway.recover_after_data_nodes: {{ getenv "ES_GATEWAY_RECOVER_AFTER_DATA_NODES" "1" }}
+gateway.expected_data_nodes: {{ getenv "ES_GATEWAY_EXPECTED_DATA_NODES" "1" }}
+gateway.recover_after_time: {{ getenv "ES_GATEWAY_RECOVER_AFTER_TIME" "1m" }}
+discovery.zen.minimum_master_nodes: {{ getenv "ES_DISCOVERY_ZEN_MINIMUM_MASTER_NODES" "1" }}
+{{- if not (eq aws.EC2Region "unknown") }}
+node.attr.zone: {{ aws.EC2Meta "placement/availability-zone" }}
+cluster.routing.allocation.awareness.attributes: zone
+{{- end }}
+{{- if getenv "KUBERNETES_PORT" }}
+discovery.zen.hosts_provider: kubernetes
+cloud.kubernetes.service: {{ .Env.KUBERNETES_SERVICE }}
+cloud.kubernetes.namespace: {{ .Env.KUBERNETES_NAMESPACE }}
+{{- else }}
+discovery.zen.ping.unicast.hosts: {{ getenv "ES_DISCOVERY_ZEN_PING_UNICAST_HOSTS" "localhost" }}
+{{- end }}
+{{- if and (getenv "ES_USER") (getenv "ES_PASSWD") }}
+readonlyrest.enable: true
+readonlyrest.response_if_req_forbidden: Sorry, your request is forbidden.
+readonlyrest.access_control_rules:
+  - name: Accept all requests from localhost
+    type: allow
+    hosts: [127.0.0.1]
+  - name: Full access granted via HTTP authentication
+    auth_key: {{ .Env.ES_USER }}:{{ .Env.ES_PASSWD }}
+    type: allow
+{{- end }}
