@@ -1,36 +1,89 @@
-version: '2.1'
+version: '2.2'
+
+x-build: &build
+  build: .
+
+x-memory: &memory
+  ulimits:
+    memlock:
+      soft: -1
+      hard: -1
+
+x-discovery: &discovery
+  links:
+  - discovery
 
 services:
   discovery:
-    build: .
+    <<: *build
+    <<: *memory
+    mem_limit: 512M
     environment:
       ES_NODE_NAME: discovery-$${HOSTNAME}
       ES_DISCOVERY_ZEN_PING_UNICAST_HOSTS: localhost
+      ES_RAM_PERCENTAGE: 50
 
   master:
-    build: .
-    links:
-      - discovery
+    <<: *build
+    <<: *memory
+    <<: *discovery
+    depends_on:
+    - discovery
+    mem_limit: 512M
     environment:
       ES_NODE_NAME: master-$${HOSTNAME}
       ES_NODE_MASTER: 'true'
       ES_DISCOVERY_ZEN_PING_UNICAST_HOSTS: discovery
+      ES_RAM_PERCENTAGE: 50
+    volumes:
+    - esmaster:/usr/share/elasticsearch/data
 
   data:
-    build: .
-    links:
-      - discovery
+    <<: *build
+    <<: *memory
+    <<: *discovery
+    depends_on:
+    - discovery
+    mem_limit: 1534M
     environment:
       ES_NODE_NAME: data-$${HOSTNAME}
       ES_NODE_DATA: 'true'
       ES_DISCOVERY_ZEN_PING_UNICAST_HOSTS: discovery
+    volumes:
+    - esdata:/usr/share/elasticsearch/data
 
   client:
-    build: .
-    links:
-      - discovery
-    ports:
-      - '9200'
+    <<: *build
+    <<: *memory
+    <<: *discovery
+    depends_on:
+    - discovery
+    mem_limit: 1024M
     environment:
       ES_NODE_NAME: client-$${HOSTNAME}
       ES_DISCOVERY_ZEN_PING_UNICAST_HOSTS: discovery
+      ES_HTTP_CORS_ENABLED: 'true'
+    ports:
+    - '9200'
+
+  cerebro:
+    image: lmenezes/cerebro
+    ports:
+    - '9000'
+    depends_on:
+    - client
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.4.1
+    ports:
+    - '5601'
+    depends_on:
+    - client
+    links:
+    - 'client:elasticsearch'
+
+volumes:
+  esmaster:
+    driver: local
+  esdata:
+    driver: local

@@ -5,6 +5,19 @@ node.master: {{ getenv "ES_NODE_MASTER" "false" }}
 node.data: {{ getenv "ES_NODE_DATA" "false" }}
 action.auto_create_index: {{ getenv "ES_ACTION_AUTO_CREATE_INDEX" "+*" }}
 xpack.security.enabled: {{ getenv "ES_XPACK_SECURITY_ENABLED" "false" }}
+xpack.monitoring.enabled: {{ getenv "ES_XPACK_MONITORING_ENABLED" "true" }}
+{{- if eq (getenv "ES_EMAIL_AWS_SES_ENABLED" "false") "true" }}
+xpack.notification.email.account:
+  ses_account:
+    smtp:
+      auth: true
+      starttls.enable: true
+      starttls.required: true
+      host: {{ getenv "ES_EMAIL_AWS_SES_HOST" "email-smtp.us-east-1.amazonaws.com" }}
+      port: 587
+      user: {{ .Env.ES_EMAIL_AWS_SES_USER }}
+      password: {{ .Env.ES_EMAIL_AWS_SES_PASSWORD }}
+{{- end }}
 {{- if eq (getenv "ES_HTTP_CORS_ENABLED" "false") "true" }}
 http.cors.enabled: true
 http.cors.allow-origin: "{{ getenv "ES_HTTP_CORS_ALLOW_ORIGIN" "*" }}"
@@ -24,14 +37,7 @@ cloud.kubernetes.namespace: {{ .Env.KUBERNETES_NAMESPACE }}
 {{- else }}
 discovery.zen.ping.unicast.hosts: {{ getenv "ES_DISCOVERY_ZEN_PING_UNICAST_HOSTS" "localhost" }}
 {{- end }}
-{{- if and (getenv "ES_USER") (getenv "ES_PASSWD") }}
-readonlyrest.enable: true
-readonlyrest.response_if_req_forbidden: Sorry, your request is forbidden.
-readonlyrest.access_control_rules:
-  - name: Accept all requests from localhost
-    type: allow
-    hosts: [127.0.0.1]
-  - name: Full access granted via HTTP authentication
-    auth_key: {{ .Env.ES_USER }}:{{ .Env.ES_PASSWD }}
-    type: allow
+{{- if eq (getenv "ES_DISCOVERY_TYPE") "single-node" }}
+discovery.type: single-node
 {{- end }}
+bootstrap.memory_lock: true

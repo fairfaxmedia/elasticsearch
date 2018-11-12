@@ -1,30 +1,21 @@
-FROM docker.elastic.co/elasticsearch/elasticsearch:5.5.0
+FROM hairyhenderson/gomplate:v2.8.0 as gomplate
 
-ENV ES_JAVA_OPTS -Xms256m -Xmx256m
+FROM docker.elastic.co/elasticsearch/elasticsearch:6.4.1
 
-USER root
-
-ENV GOMPLATE_VERSION v1.9.1
-RUN curl -o /usr/local/bin/gomplate -L https://github.com/hairyhenderson/gomplate/releases/download/${GOMPLATE_VERSION}/gomplate_linux-amd64 \
-    && chmod 755 /usr/local/bin/gomplate
-
-USER elasticsearch
-
-RUN sed -i 's|^\(-Xm.2g\)$|#\ \1|' config/jvm.options
+COPY --from=gomplate --chown=root:root /gomplate /usr/local/bin/gomplate
 
 RUN elasticsearch-plugin install --batch repository-s3
-RUN elasticsearch-plugin install --batch io.fabric8:elasticsearch-cloud-kubernetes:5.5.0
-RUN elasticsearch-plugin install --batch https://distfiles.compuscene.net/elasticsearch/elasticsearch-prometheus-exporter-5.5.0.0.zip
+RUN elasticsearch-plugin install --batch https://distfiles.compuscene.net/elasticsearch/elasticsearch-prometheus-exporter-6.4.1.0.zip
 
-USER root
+RUN sed -i 's|^\(-Xm.1g\)$|#\ \1|' config/jvm.options
 
-COPY config/elasticsearch.yml.gotpl /usr/share/elasticsearch/config/
+RUN { \
+      echo '10-:-XshowSettings:vm' ; \
+    } >> config/jvm.options
 
-COPY docker-entrypoint.sh .
-RUN chown elasticsearch: docker-entrypoint.sh && \
-    chmod +x docker-entrypoint.sh
+COPY --chown=elasticsearch:root config/elasticsearch.yml.gotpl /usr/share/elasticsearch/config/
+COPY --chown=elasticsearch:root docker-entrypoint-wrapper.sh /usr/local/bin
+COPY --chown=elasticsearch:root bootstrap /root/bootstrap
 
-USER elasticsearch
-
-ENTRYPOINT ["/usr/share/elasticsearch/docker-entrypoint.sh"]
-CMD ["elasticsearch"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint-wrapper.sh"]
+CMD ["eswrapper"]
