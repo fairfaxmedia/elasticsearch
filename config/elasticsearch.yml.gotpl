@@ -36,3 +36,6 @@ discovery.type: single-node
 {{- end }}
 bootstrap.memory_lock: true
 thread_pool.write.queue_size: {{ getenv "ES_THREAD_POOL_WRITE_QUEUE_SIZE" "200" }}
+{{- if (datasourceReachable "settings")}}
+{{ include "settings" -}}
+{{- end }}
