@@ -35,3 +35,4 @@ discovery.zen.ping.unicast.hosts: {{ getenv "ES_DISCOVERY_ZEN_PING_UNICAST_HOSTS
 discovery.type: single-node
 {{- end }}
 bootstrap.memory_lock: true
+thread_pool.write.queue_size: {{ getenv "ES_THREAD_POOL_WRITE_QUEUE_SIZE" "200" }}
