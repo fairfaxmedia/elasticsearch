@@ -1,11 +1,11 @@
-FROM hairyhenderson/gomplate:v2.8.0 as gomplate
+FROM hairyhenderson/gomplate:v3.0.0 as gomplate
 
-FROM docker.elastic.co/elasticsearch/elasticsearch:6.4.1
+FROM docker.elastic.co/elasticsearch/elasticsearch:6.5.1
 
 COPY --from=gomplate --chown=root:root /gomplate /usr/local/bin/gomplate
 
 RUN elasticsearch-plugin install --batch repository-s3
-RUN elasticsearch-plugin install --batch https://distfiles.compuscene.net/elasticsearch/elasticsearch-prometheus-exporter-6.4.1.0.zip
+RUN elasticsearch-plugin install --batch https://distfiles.compuscene.net/elasticsearch/elasticsearch-prometheus-exporter-6.5.1.0.zip
 
 RUN sed -i 's|^\(-Xm.1g\)$|#\ \1|' config/jvm.options
 
