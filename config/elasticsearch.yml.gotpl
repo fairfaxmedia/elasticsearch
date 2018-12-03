@@ -3,9 +3,9 @@ network.host: {{ getenv "ES_NETWORK_HOST" "0.0.0.0" }}
 node.name: {{ getenv "ES_NODE_NAME" "node" }}
 node.master: {{ getenv "ES_NODE_MASTER" "false" }}
 node.data: {{ getenv "ES_NODE_DATA" "false" }}
-action.auto_create_index: {{ getenv "ES_ACTION_AUTO_CREATE_INDEX" "+*" }}
 xpack.security.enabled: {{ getenv "ES_XPACK_SECURITY_ENABLED" "false" }}
 xpack.monitoring.enabled: {{ getenv "ES_XPACK_MONITORING_ENABLED" "true" }}
+xpack.monitoring.collection.enabled: {{ getenv "ES_XPACK_MONITORING_COLLECTION_ENABLED" "true" }}
 {{- if eq (getenv "ES_EMAIL_AWS_SES_ENABLED" "false") "true" }}
 xpack.notification.email.account:
   ses_account:
@@ -35,7 +35,6 @@ discovery.zen.ping.unicast.hosts: {{ getenv "ES_DISCOVERY_ZEN_PING_UNICAST_HOSTS
 discovery.type: single-node
 {{- end }}
 bootstrap.memory_lock: true
-thread_pool.write.queue_size: {{ getenv "ES_THREAD_POOL_WRITE_QUEUE_SIZE" "200" }}
 {{- if (datasourceReachable "settings")}}
 {{ include "settings" -}}
 {{- end }}
