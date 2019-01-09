@@ -1,8 +1,25 @@
 # Elasticsearch
 
-## Overview
-
 An opinionated Docker implementation for Elasticsearch focused on providing a reliable yet flexible solution based on the upstream official image.
+
+<!-- TOC depthFrom:2 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
+- [Features](#features)
+- [Getting Started](#getting-started)
+	- [Prerequisites](#prerequisites)
+	- [Installing](#installing)
+	- [Environmental Variables](#environmental-variables)
+	- [Extra Settings](#extra-settings)
+	- [Memory Allocation](#memory-allocation)
+- [Deployment](#deployment)
+- [Components](#components)
+- [Contributing](#contributing)
+- [Versioning](#versioning)
+- [Authors](#authors)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
+
+<!-- /TOC -->
 
 ## Features
 
