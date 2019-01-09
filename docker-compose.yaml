@@ -21,7 +21,7 @@ services:
     environment:
       ES_NODE_NAME: discovery-$${HOSTNAME}
       ES_DISCOVERY_ZEN_PING_UNICAST_HOSTS: localhost
-      ES_RAM_PERCENTAGE: 50
+      ES_RAM_PERCENTAGE: 25
 
   master:
     <<: *build
@@ -34,7 +34,7 @@ services:
       ES_NODE_NAME: master-$${HOSTNAME}
       ES_NODE_MASTER: 'true'
       ES_DISCOVERY_ZEN_PING_UNICAST_HOSTS: discovery
-      ES_RAM_PERCENTAGE: 50
+      ES_RAM_PERCENTAGE: 25
     volumes:
     - esmaster:/usr/share/elasticsearch/data
 
@@ -44,11 +44,12 @@ services:
     <<: *discovery
     depends_on:
     - discovery
-    mem_limit: 1534M
+    mem_limit: 658M
     environment:
       ES_NODE_NAME: data-$${HOSTNAME}
       ES_NODE_DATA: 'true'
       ES_DISCOVERY_ZEN_PING_UNICAST_HOSTS: discovery
+      ES_RAM_PERCENTAGE: 40
     volumes:
     - esdata:/usr/share/elasticsearch/data
 
@@ -58,13 +59,24 @@ services:
     <<: *discovery
     depends_on:
     - discovery
-    mem_limit: 1024M
+    mem_limit: 658M
     environment:
       ES_NODE_NAME: client-$${HOSTNAME}
       ES_DISCOVERY_ZEN_PING_UNICAST_HOSTS: discovery
       ES_HTTP_CORS_ENABLED: 'true'
+      ES_RAM_PERCENTAGE: 40
     ports:
     - '9200'
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.5.1
+    ports:
+    - '5601'
+    depends_on:
+    - client
+    mem_limit: 1792M
+    links:
+    - 'client:elasticsearch'
 
   cerebro:
     image: lmenezes/cerebro
@@ -72,15 +84,10 @@ services:
     - '9000'
     depends_on:
     - client
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:6.5.0
-    ports:
-    - '5601'
-    depends_on:
-    - client
-    links:
-    - 'client:elasticsearch'
+    cpu_shares: 4049
+    mem_limit: 256M
+    environment:
+      JAVA_OPTS: "-XshowSettings:vm -Xmx64m"
 
 volumes:
   esmaster:
