@@ -105,7 +105,7 @@ docker-compose port cerebro 9000
 
 ### Extra Settings
 
-The existence of `/usr/share/elasticsearch/config/elasticsearch_custom.yml` will automatically be appended to the `elasticsearch.yml` settings at runtime
+The existence of `/usr/share/elasticsearch/config/elasticsearch_custom.yml` will automatically be appended to the `elasticsearch.yml` settings at runtime.
 
 ### Memory Allocation
 
