@@ -61,7 +61,7 @@ An alternative management interface is available using Cerebro.
 docker-compose port cerebro 9000
 ```
 
-## Environmental Variables
+### Environmental Variables
 
 | Variable                               | Default                            | Comment |
 |:---------------------------------------|:-----------------------------------|:--------|
@@ -86,11 +86,11 @@ docker-compose port cerebro 9000
 | ES_DISCOVERY_ZEN_PING_UNICAST_HOSTS    | localhost                          |         |
 | ES_DISCOVERY_TYPE                      |                                    | Unset   |
 
-## Extra Settings
+### Extra Settings
 
 The existence of `/usr/share/elasticsearch/config/elasticsearch_custom.yml` will automatically be appended to the `elasticsearch.yml` settings at runtime
 
-## Memory Allocation
+### Memory Allocation
 
 Running a JVM in a container requires an understand of the relationship of the cgroups memory limit and the heap size. There is an overhead required in running a JVM as well which is approximate 348Mi.
 
