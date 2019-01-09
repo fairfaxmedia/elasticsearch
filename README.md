@@ -61,6 +61,35 @@ An alternative management interface is available using Cerebro.
 docker-compose port cerebro 9000
 ```
 
+## Environmental Variables
+
+| Variable                               | Default                            | Comment |
+|:---------------------------------------|:-----------------------------------|:--------|
+| ES_CLUSTER_NAME                        | example                            |         |
+| ES_NETWORK_HOST                        | 0.0.0.0                            |         |
+| ES_NODE_NAME                           | node                               |         |
+| ES_NODE_MASTER                         | false                              |         |
+| ES_NODE_DATA                           | false                              |         |
+| ES_XPACK_SECURITY_ENABLED              | false                              |         |
+| ES_XPACK_MONITORING_ENABLED            | true                               |         |
+| ES_XPACK_MONITORING_COLLECTION_ENABLED | true                               |         |
+| ES_EMAIL_AWS_SES_ENABLED               | false                              |         |
+| ES_EMAIL_AWS_SES_HOST                  | email-smtp.us-east-1.amazonaws.com |         |
+| ES_EMAIL_AWS_SES_USER                  |                                    | Unset   |
+| ES_EMAIL_AWS_SES_PASSWORD              |                                    | Unset   |
+| ES_HTTP_CORS_ENABLED                   | false                              |         |
+| ES_HTTP_CORS_ALLOW_ORIGIN              | *                                  |         |
+| ES_GATEWAY_RECOVER_AFTER_DATA_NODES    | 1                                  |         |
+| ES_GATEWAY_EXPECTED_DATA_NODES         | 1                                  |         |
+| ES_GATEWAY_RECOVER_AFTER_TIME          | 1m                                 |         |
+| ES_DISCOVERY_ZEN_MINIMUM_MASTER_NODES  | 1                                  |         |
+| ES_DISCOVERY_ZEN_PING_UNICAST_HOSTS    | localhost                          |         |
+| ES_DISCOVERY_TYPE                      |                                    | Unset   |
+
+## Extra Settings
+
+The existence of `/usr/share/elasticsearch/config/elasticsearch_custom.yml` will automatically be appended to the `elasticsearch.yml` settings at runtime
+
 ## Memory Allocation
 
 Running a JVM in a container requires an understand of the relationship of the cgroups memory limit and the heap size. There is an overhead required in running a JVM as well which is approximate 348Mi.
@@ -68,7 +97,7 @@ Running a JVM in a container requires an understand of the relationship of the c
 A simple formula to use to determine the RAM percentage is as follows:
 
 ```
-(Memory limit - 384Mi / Memory limit) * 100
+(Memory Limit - 384Mi / Memory Limit) * 100
 ```
 
 ## Deployment
