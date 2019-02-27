@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source /root/bootstrap/*
+source <(cat /root/bootstrap/*)
 
 gomplate --file /usr/share/elasticsearch/config/elasticsearch.yml.gotpl \
          --datasource settings=file:///usr/share/elasticsearch/config/elasticsearch_custom.yml \
