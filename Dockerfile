@@ -1,6 +1,6 @@
 FROM hairyhenderson/gomplate:v3.0.0 as gomplate
 
-FROM docker.elastic.co/elasticsearch/elasticsearch:6.8.21
+FROM docker.elastic.co/elasticsearch/elasticsearch:6.8.23
 
 COPY --from=gomplate --chown=root:root /gomplate /usr/local/bin/gomplate
 
