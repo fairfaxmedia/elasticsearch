@@ -1,4 +1,4 @@
-FROM hairyhenderson/gomplate:v3.11.5 as gomplate
+FROM hairyhenderson/gomplate:v3.11.7 as gomplate
 
 FROM docker.elastic.co/elasticsearch/elasticsearch:6.8.21
 
